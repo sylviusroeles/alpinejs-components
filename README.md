@@ -6,7 +6,8 @@ My collection of Alpine.JS components. I use Alpine.JS in my projects, and I'm a
 
 A slide over component that can be used to display a modal or a sidebar. It slides in from the bottom of the screen because the component was made for mobile devices. It can be used on desktop as well.
 
-[Demo](demo/slide-over.html)
+[Demo](https://codepen.io/sylviusroeles/pen/MWqzpEP)
+[Source](demo/slide-over.html)
 
 # Contributing
 
