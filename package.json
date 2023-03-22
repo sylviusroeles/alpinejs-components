@@ -1,0 +1,14 @@
+{
+  "name": "web-components-demo",
+  "version": "0.0.1",
+  "description": "Web Components Demo",
+  "keywords": "",
+  "license": "",
+  "author": "Sylvius Roeles",
+  "scripts": {
+    "serve": "npx serve demo/"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}

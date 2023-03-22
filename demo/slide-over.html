@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en"
+      style="font-size: 16px">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-200 h-full w-full h-full flex justify-center items-center flex-col">
+<div class="flex flex-col items-center justify-center h-full max-w-md bg-white p-4">
+    <h1 class="text-3xl mb-4">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    </h1>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid at corporis, cumque cupiditate deserunt dicta dolorem dolorum eum facilis laborum mollitia necessitatibus neque nisi nostrum numquam, officiis repudiandae voluptas voluptates.
+    </p>
+    <p class="mt-4 mb-8">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur corporis dolorum ea earum esse fugit modi nam nesciunt pariatur quibusdam. Culpa cupiditate facere minus nam perferendis quidem sed tempore ut.
+    </p>
+    <div x-data="slideOver">
+        <div
+                class="fixed bottom-0 left-0 right-0 z-40 overflow-hidden h-screen w-screen bg-blue-500/50"
+                x-show="isOpen"
+                x-cloak
+                x-transition:enter="transition ease-out duration-700"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                draggable="true"
+                x-on:dragstart.self="dragStart"
+                x-on:dragend.self="dragEnd"
+                x-on:drag.self="drag"
+                x-on:touchstart.self="dragStart"
+                x-on:touchend.self="dragEnd"
+                x-on:touchmove.self="drag"
+                x-bind:style="slideOverStyle"
+                x-ref="slideOver"
+                @close-slide-over="closeSlideOver"
+        >
+            <div
+                    x-show="isOpen"
+                    x-transition:enter="transition ease-out duration-700"
+                    x-transition:enter-start="transform translate-y-full"
+                    x-transition:enter-end="transform translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="transform translate-y-0"
+                    x-transition:leave-end="transform translate-y-full"
+                    x-bind:style="slideOverContentStyle"
+                    class="flex flex-col items-center justify-center bg-white h-full w-full shadow-2xl mt-16 p-6 pointer-events-auto">
+                <div class="flex flex-col items-center justify-center">
+                    You can drag this element down to close it! Or by clicking the button below.
+                </div>
+                <button class="py-4 px-6 bg-blue-500 text-white rounded-lg shadow-lg cursor-pointer mt-8"
+                        @click.prevent.stop="closeSlideOver">
+                    Close slide over
+                </button>
+            </div>
+        </div>
+        
+        <button class="py-4 px-6 bg-blue-500 text-white rounded-lg shadow-lg cursor-pointer"
+             @click.prevent.stop="openSlideOver">
+            Open slide over
+        </button>
+        
+        <script type="text/javascript">
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('slideOver', () => ({
+                    isOpen: false,
+                    dragEndY: 0,
+                    dragStartY: 0,
+                    color: null,
+                    slideOverBackground: null,
+                    slideOverStyle: null,
+                    slideOverContentStyle: null,
+                    openSlideOver() {
+                        document.body.style.overflow = 'hidden';
+                        this.isOpen = true;
+                    },
+                    closeSlideOver() {
+                        document.body.style.overflow = 'auto';
+                        this.isOpen = false;
+                        this.slideOverContentStyle = null;
+                        this.slideOverStyle = null;
+                    },
+                    dragStart(event) {
+                        this.dragStartY = event.clientY ?? event.touches[0].clientY;
+                    },
+                    dragEnd(event) {
+                        this.dragEndY = event.clientY ?? event.changedTouches[0].clientY;
+                        
+                        if (this.dragEndY - this.dragStartY > 200) {
+                            this.slideOverContentStyle = 'transform: translateY(100%)';
+                            setTimeout(() => {
+                                this.slideOverStyle = 'opacity: 0';
+                                this.closeSlideOver();
+                            }, 200);
+                        } else {
+                            this.slideOverContentStyle = 'transform: translateY(0)';
+                            this.slideOverStyle = 'opacity: 1';
+                        }
+                    },
+                    drag(event) {
+                        //prevent element from being dragged up
+                        if (event.clientY ?? event.touches[0].clientY < 0) {
+                            return;
+                        }
+                        
+                        //prevent element from twitching when dragged down by only setting the style after it reaches a certain point
+                        if (event.clientY ?? event.touches[0].clientY < 40) {
+                            return
+                        }
+                        
+                        this.slideOverContentStyle = `transform: translateY(${event.clientY ?? event.touches[0].clientY}px)`;
+                        this.slideOverStyle = `background: ${this.slideOverBackground.replace(/[^,]+(?=\))/, 0.5 - (event.clientY ?? event.touches[0].clientY / 1000) / 2)}`;
+                    },
+                    init() {
+                        this.slideOverBackground = getComputedStyle(this.$refs.slideOver).backgroundColor;
+                    }
+                }))
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>
